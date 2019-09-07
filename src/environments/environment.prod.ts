@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  socketUrl: 'ws://netcentric-game-server.herokuapp.com/'
 };
