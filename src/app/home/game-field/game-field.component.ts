@@ -9,7 +9,9 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 import {
   transferArrayItem,
   moveItemInArray,
-  CdkDragDrop
+  CdkDragDrop,
+  CdkDrag,
+  CdkDropList
 } from '@angular/cdk/drag-drop';
 import { arraysEqual } from 'ng-zorro-antd';
 
@@ -39,6 +41,8 @@ export class GameFieldComponent implements OnInit {
 
   ngOnInit() {}
 
+  /* Drag and Drop Stuff */
+
   dropAnswer(event: CdkDragDrop<DraggableCard[]>) {
     if (event.previousContainer === event.container) {
       const arr = this.answer$.getValue();
@@ -47,9 +51,17 @@ export class GameFieldComponent implements OnInit {
     } else {
       const card = event.previousContainer.data[event.previousIndex];
       if (card.type === CardType.number) {
-        this.addNumber(card as any, event.previousIndex, event.currentIndex);
+        this.addNumber(
+          card as NumberCard,
+          event.previousIndex,
+          event.currentIndex
+        );
       } else if (card.type === CardType.operator) {
-        this.addOperator(card as any, event.currentIndex);
+        this.addOperator(
+          card as OperatorCard,
+          event.previousIndex,
+          event.currentIndex
+        );
       }
     }
   }
@@ -89,28 +101,34 @@ export class GameFieldComponent implements OnInit {
     this.answer$.next(ans);
   }
 
+  removeOperator(card: OperatorCard, idx: number) {
+    const ansArr = this.answer$.getValue();
+    ansArr.splice(idx, 1);
+    this.answer$.next(ansArr);
+    this.operators.splice(this.operators.length, 0, card);
+  }
+
   removeCard(card: DraggableCard, idx: number) {
     if (card.type === CardType.number) {
       this.removeNumber(idx);
     } else {
-      const ansArr = this.answer$.getValue();
-      ansArr.splice(idx, 1);
-      this.answer$.next(ansArr);
+      this.removeOperator(card as OperatorCard, idx);
     }
   }
 
   addNumber(card: NumberCard, numIdx: number, ansIdx?: number) {
     const ansArr = this.answer$.getValue();
-    ansArr.splice(ansIdx || ansArr.length, 0, card);
+    ansArr.splice(ansIdx !== undefined ? ansIdx : ansArr.length, 0, card);
     this.answer$.next(ansArr);
     const numArr = this.numbers$.getValue();
     numArr.splice(numIdx, 1);
     this.numbers$.next(numArr);
   }
 
-  addOperator(card: OperatorCard, ansIdx?: number) {
+  addOperator(card: OperatorCard, opIdx: number, ansIdx?: number) {
     const ansArr = this.answer$.getValue();
     ansArr.splice(ansIdx || ansArr.length, 0, card);
     this.answer$.next(ansArr);
+    this.operators.splice(opIdx, 1);
   }
 }
