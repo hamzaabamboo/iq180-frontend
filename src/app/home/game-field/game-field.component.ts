@@ -21,15 +21,7 @@ import { arraysEqual } from 'ng-zorro-antd';
   styleUrls: ['./game-field.component.scss']
 })
 export class GameFieldComponent implements OnInit {
-  numbers$ = new BehaviorSubject<NumberCard[]>(
-    [
-      { value: 1, display: '1', disabled: false },
-      { value: 2, display: '2', disabled: false },
-      { value: 3, display: '3', disabled: false },
-      { value: 4, display: '4', disabled: false },
-      { value: 5, display: '5', disabled: false }
-    ].map(e => ({ ...e, type: CardType.number }))
-  );
+  numbers$ = new BehaviorSubject<NumberCard[]>([]);
   answer$ = new BehaviorSubject<DraggableCard[]>([]);
   operators: OperatorCard[] = [
     { operator: '+', display: '+', disabled: false },
@@ -39,10 +31,30 @@ export class GameFieldComponent implements OnInit {
   ].map(e => ({ ...e, type: CardType.operator }));
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.reset();
+  }
 
   /* Drag and Drop Stuff */
 
+  reset() {
+    this.operators = [
+      { operator: '+', display: '+', disabled: false },
+      { operator: '-', display: '-', disabled: false },
+      { operator: 'x', display: 'x', disabled: false },
+      { operator: '÷', display: '÷', disabled: false }
+    ].map(e => ({ ...e, type: CardType.operator }));
+    this.numbers$.next(
+      [
+        { value: 1, display: '1', disabled: false },
+        { value: 2, display: '2', disabled: false },
+        { value: 3, display: '3', disabled: false },
+        { value: 4, display: '4', disabled: false },
+        { value: 5, display: '5', disabled: false }
+      ].map(e => ({ ...e, type: CardType.number }))
+    );
+    this.answer$.next([]);
+  }
   dropAnswer(event: CdkDragDrop<DraggableCard[]>) {
     if (event.previousContainer === event.container) {
       const arr = this.answer$.getValue();
@@ -130,5 +142,13 @@ export class GameFieldComponent implements OnInit {
     ansArr.splice(ansIdx || ansArr.length, 0, card);
     this.answer$.next(ansArr);
     this.operators.splice(opIdx, 1);
+  }
+
+  isNumber(item: CdkDrag<DraggableCard>) {
+    return item.data.type === CardType.number;
+  }
+
+  isOperator(item: CdkDrag<DraggableCard>) {
+    return item.data.type === CardType.operator;
   }
 }

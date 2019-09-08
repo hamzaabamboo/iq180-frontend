@@ -23,6 +23,7 @@
         [cdkDropListConnectedTo]="[answerList]"
         class="card-list"
         (cdkDropListDropped)="dropNumber($event)"
+        [cdkDropListEnterPredicate]="isNumber"
       >
         <div
           class="card"
@@ -30,6 +31,7 @@
           [cdkDragDisabled]="card.disabled"
           *ngFor="let card of numbers$ | async; let i = index"
           (click)="addNumber(card, i)"
+          [cdkDragData]="card"
           cdkDrag
         >
           <span>{{ card.display }}</span>
@@ -51,6 +53,7 @@
           cdkDragBoundary=".game"
           *ngFor="let card of answer$ | async; let i = index"
           (click)="removeCard(card, i)"
+          [cdkDragData]="card"
           cdkDrag
         >
           <span>{{ card.display }}</span>
@@ -66,12 +69,14 @@
         [cdkDropListConnectedTo]="[answerList]"
         class="card-list"
         (cdkDropListDropped)="dropOperator($event)"
+        [cdkDropListEnterPredicate]="isOperator"
       >
         <div
           class="card"
           cdkDragBoundary=".game"
           [cdkDragDisabled]="(answer$ | async)?.length === 9"
           *ngFor="let card of operators; let i = index"
+          [cdkDragData]="card"
           (click)="addOperator(card, i)"
           cdkDrag
         >
@@ -79,5 +84,8 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="reset">
+    <button nz-button nzType="danger" (click)="reset()">Reset</button>
   </div>
 </div>

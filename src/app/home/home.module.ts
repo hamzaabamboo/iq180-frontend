@@ -9,7 +9,8 @@ import {
   NzListModule,
   NzSkeletonModule,
   NzCardModule,
-  NzAvatarModule
+  NzAvatarModule,
+  NzButtonModule
 } from 'ng-zorro-antd';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -36,6 +37,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     NzAvatarModule,
     NzGridModule,
     NzListModule,
+    NzButtonModule,
     ReactiveFormsModule
   ]
 })
